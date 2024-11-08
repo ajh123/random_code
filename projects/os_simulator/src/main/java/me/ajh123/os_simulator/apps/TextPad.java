@@ -4,10 +4,10 @@ import me.ajh123.os_simulator.App;
 import org.pf4j.Extension;
 
 @Extension
-public class Calculator implements App {
+public class TextPad extends App {
     @Override
     public void init() {
-        System.out.println("AAAA");
+        super.init();
     }
 
     @Override
@@ -17,6 +17,6 @@ public class Calculator implements App {
 
     @Override
     public String getName() {
-        return "Calculator";
+        return "TextPad";
     }
 }
