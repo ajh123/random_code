@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WYSIWYG Multi-Page Editor with Overflow Handling</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background: #e0e0e0;
+      padding: 40px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Container for pages */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      counter-reset: page;
+    }
+
+    /* Style for each page */
+    .page {
+      width: 8.5in;
+      height: 11in;
+      padding: 20px;
+      background: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+      counter-increment: page;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Editable content area */
+    .editable-content {
+      flex-grow: 1; /* Ensure content area grows to fill the space */
+      overflow: hidden; /* Prevent scrolling */
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+      pointer-events: none; /* Prevent the footer from being edited or deleted */
+    }
+
+    /* Styles for the toolbar */
+    .toolbar {
+      position: fixed;
+      top: 10px;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      padding: 5px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .toolbar button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Toolbar for basic text formatting -->
+  <div class="toolbar">
+    <button onclick="document.execCommand('bold')">Bold</button>
+    <button onclick="document.execCommand('italic')">Italic</button>
+    <button onclick="document.execCommand('underline')">Underline</button>
+    <button onclick="document.execCommand('insertOrderedList')">Numbered List</button>
+    <button onclick="document.execCommand('insertUnorderedList')">Bulleted List</button>
+  </div>
+
+  <!-- Container for editable pages -->
+  <div class="container" id="editorContainer">
+    <div class="page">
+      <div class="editable-content" contenteditable="true" oninput="checkOverflow(this)">
+        <p>Type here...</p>
+      </div>
+      <div class="footer">Page 1</div>
+    </div>
+  </div>
+
+  <script>
+    // Function to check if a page overflows and move overflow content to a new page
+    function checkOverflow(editableContent) {
+      const container = document.getElementById('editorContainer');
+      const page = editableContent.closest('.page');
+      const footer = page.querySelector('.footer');
+      
+      // Check if the content overflows the current page height
+      if (editableContent.scrollHeight > editableContent.clientHeight) {
+        let originalContent = editableContent;
+        let nextPage = container.querySelector('.page:last-child');
+        
+        // Create a new page if necessary
+        if (!nextPage || nextPage === page) {
+          // Create the new page
+          const newPage = document.createElement('div');
+          newPage.classList.add('page');
+          newPage.innerHTML = `
+            <div class="editable-content" contenteditable="true" oninput="checkOverflow(this)">
+              <p>Continue typing here...</p>
+            </div>
+            <div class="footer">Page ${container.children.length + 1}</div>
+          `;
+          container.appendChild(newPage);
+          nextPage = newPage; // Set the nextPage reference
+        }
+
+        // Move content to the next page
+        let newEditableContent = nextPage.querySelector('.editable-content');
+        
+        // Move all overflow content from current page to the next page
+        while (originalContent.scrollHeight > originalContent.clientHeight && originalContent.lastChild) {
+          newEditableContent.insertBefore(originalContent.lastChild, newEditableContent.firstChild);
+        }
+
+        // Automatically focus on the new page's content area so typing continues smoothly
+        nextPage.querySelector('.editable-content').focus();
+      }
+    }
+  </script>
+</body>
+</html>
