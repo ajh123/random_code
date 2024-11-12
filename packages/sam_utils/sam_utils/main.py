@@ -1,6 +1,6 @@
 from typing import Type, List
 
-def validated_input(res_type: Type, message: str, invalid_message: str):
+def validated_input(res_type: Type, message: str, invalid_message: str = "That object is invalid, please try again."):
     '''
     A generic function to validate an input based on a data type.
 
@@ -23,7 +23,7 @@ def validated_input(res_type: Type, message: str, invalid_message: str):
             print(invalid_message) # If there were a value error display the user a message
     return res
 
-def validate_list_input(list: List[str], message: str, invalid_message: str) -> str:
+def validate_list_input(list: List[str], message: str, invalid_message: str = "That object is invalid, please try again.") -> str:
     '''
     A generic function to validate an input based on values in a string list.
 
@@ -53,3 +53,7 @@ def display_list(list: List[str]) -> str:
     for ele in list:
         out += f"{ele}, "
     return out
+
+def yes_or_no_input(message):
+    actions = ["yes", "no"]
+    return validate_list_input(actions, f"{message}. Choose yes or no. ")
