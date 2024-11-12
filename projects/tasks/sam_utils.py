@@ -6,9 +6,10 @@ def validated_input(res_type: Type, message: str, invalid_message: str):
 
     This function will catch all ValueErrors thrown by the data types constructor
 
-    @param res_type: Any constructor for any data type, the constructor must take one paramater.
-    @param message: The message to diaplay to the user when they input.
-    @param invalid_message: The message to display when the user inputs an invalid data type.
+    :param res_type: Any constructor for any data type, the constructor must take one paramater.
+    :param message: The message to diaplay to the user when they input.
+    :param invalid_message: The message to display when the user inputs an invalid data type.
+    :returns: Returns the user's input casted to the type speficied by `res_type`.
     '''
     ok = False # Variable used to check if the data input is valid
     res = None # The result returned from the function
@@ -30,9 +31,10 @@ def validate_list_input(list: List[str], message: str, invalid_message: str) -> 
 
     The function will return the user's input.
 
-    @param list: The list you wish to compare againist.
-    @param message: The message to diaplay to the user when they input.
-    @param invalid_message: The message to display when the user inputs an object thats not in the list.
+    :param list: The list you wish to compare againist.
+    :param message: The message to diaplay to the user when they input.
+    :param invalid_message: The message to display when the user inputs an object thats not in the list.
+    :returns: The object in the list the user choose.
     '''
 
     ok = False # Variable used to check if the data input is valid
