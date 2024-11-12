@@ -1,4 +1,4 @@
-from sam_utils import validated_input
+from sam_utilities import validated_input
 
 # Retreive an input and validate it agasint all integers
 destination = validated_input(int, "Enter a number to find its factorial ", "That value is not number, try again")

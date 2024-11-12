@@ -1,4 +1,4 @@
-from sam_utils.maths import is_numeric, is_even
+from sam_utilities.maths import is_numeric, is_even
 
 
 l = ["fdfdgfd", 432354, 12, 6000, 47437437922121, print, -1, 1.0, (1, 4, 5), "aasafdfdf", int, 6.6]

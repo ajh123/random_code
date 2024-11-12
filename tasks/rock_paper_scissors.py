@@ -1,6 +1,6 @@
 from typing import Dict
 import random
-from sam_utils import validate_list_input,  display_list
+from sam_utilities import validate_list_input, display_list
 
 class Action:
     def is_stronger_then(self, action: 'Action') -> bool | None:

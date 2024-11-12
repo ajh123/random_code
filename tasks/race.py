@@ -1,5 +1,5 @@
-from sam_utils import yes_or_no_input, validated_input
-from sam_utils.lists import dual_sort
+from sam_utilities import yes_or_no_input, validated_input
+from sam_utilities.lists import dual_sort
 
 names = []
 times = []

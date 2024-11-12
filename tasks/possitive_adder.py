@@ -1,5 +1,5 @@
-from sam_utils import validated_input
-from sam_utils.maths import is_positive
+from sam_utilities import validated_input
+from sam_utilities.maths import is_positive
 
 user_sum = 0
 running = True

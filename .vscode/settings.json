@@ -1,5 +1,5 @@
 {
     "python.analysis.extraPaths": [
-        "./packages/sam_utils"
+        "./packages/sam_utilities"
     ]
 }
