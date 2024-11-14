@@ -97,7 +97,7 @@ class SmartMotorway:
         
         board.set_speed_limit(-1)
 
-        for lane, _ in board.lane_statuses:
+        for lane, _ in board.lane_statuses.items():
             board.set_lane_status(lane, True)
         
         board.display_message("")

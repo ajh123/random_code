@@ -35,7 +35,6 @@ def create_message_board():
 
 @app.route('/message_boards/reset/<location>', methods=['DELETE'])
 def reset_message_board(location: str):
-    print("A")
     try:
         motorway.reset_board(location)
         board = motorway.get_board(location)
