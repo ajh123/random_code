@@ -1,0 +1,4 @@
+{"obj": "Person", "name": "bob", "age": 10, "job": "Nitwit", "salery": 0.0, "work_hours": [0, 24], "company": null}
+{"obj": "Worker", "name": "Banana Man", "age": 30, "job": "Janitor", "salery": 5.0, "work_hours": [7, 10], "company": "Microsoft", "manager": "Dr Pythonia"}
+{"obj": "Worker", "name": "Steave", "age": 50, "job": "Painter", "salery": 6.0, "work_hours": [5, 6], "company": "Microsoft", "manager": "Dr Pythonia"}
+{"obj": "Manager", "name": "Dr Pythonia", "age": 70, "job": "Programmer", "salery": 15.0, "work_hours": [3, 5], "company": "Microsoft", "number_managed": 2}
