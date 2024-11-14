@@ -16,6 +16,26 @@ def get_message_board(location: str):
         return jsonify(board.to_dict()), 200
     return jsonify({"error": "Message board not found"}), 404
 
+@app.route('/message_boards/attribute/<location>/<attribute>', methods=['GET'])
+def get_message_board_attribute(location: str, attribute: str):
+    board = motorway.get_board(location)
+    if board:
+        if attribute not in board.to_dict().keys():
+            return jsonify({"error": "Message board attribute not found"}), 404
+        return jsonify(board.to_dict()[attribute]), 200
+    return jsonify({"error": "Message board not found"}), 404
+
+@app.route('/message_boards/attribute/<location>/<attribute>', methods=['POST'])
+def set_message_board_attribute(location: str, attribute: str):
+    board = motorway.get_board(location)
+    data = request.get_json()
+    if board:
+        if attribute not in board.to_dict().keys():
+            return jsonify({"error": "Message board attribute not found"}), 404
+        board.__dict__[attribute] = data
+        return jsonify(board.to_dict()[attribute]), 200
+    return jsonify({"error": "Message board not found"}), 404
+
 @app.route('/message_boards', methods=['POST'])
 def create_message_board():
     data = request.get_json()
@@ -44,7 +64,6 @@ def reset_message_board(location: str):
 
 @app.route('/message_boards/<location>', methods=['PUT'])
 def update_message_board(location: str):
-    print("B")
     data = request.get_json()
     speed = data.get("speed_limit")
     lane_statuses = data.get("lane_statuses")
