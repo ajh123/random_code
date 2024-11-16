@@ -1,4 +1,8 @@
-Miners Online is the official hosting partner for the Samland Government, which Miners Online can be found online at https://minersonline.uk/, or on GitHub at https://github.com/miners-online.
+Miners Online is the official hosting partner for the Samland Government.
+
+Miners Online can be found online at https://minersonline.uk/, or on GitHub at https://github.com/miners-online.
+
+Miners Online and Samland were founded by the same person.
 
 ## What Miners Online may do is not what the Samland government may do.
 

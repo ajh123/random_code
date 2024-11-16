@@ -8,12 +8,6 @@ asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 model = "gpt-4o-mini"
 
-# Initialize the GPT client with the desired provider
-client = Client()
-
-# Initialize an empty conversation history
-messages = []
-
 # Read context
 files = [
     "instructions.md",
@@ -21,13 +15,25 @@ files = [
     "miners-online.md"
 ]
 
-for file in files:
-    with open(file) as f:
-        context = f.read()
-        messages.append({"role": "system", "content": context})
+# Initialize the GPT client with the desired provider
+client = Client()
+
+# Initialize an empty conversation history
+messages = []
+
+for path in files:
+    with open(path) as f:
+        content = f.read()
+        context = ""
+        if path == "instructions.md":
+            context = f"{content}"
+        else:
+            context = f"<document path=\"{path}\" format=\"markdown\">\n{content}\n</document>"
+        messages.append({"role": "system", "content": f"{context}"})
 
 dt_now = datetime.datetime.now(datetime.timezone.utc)
-messages.append({"role": "system", "content": f"The conversation start date is {dt_now.strftime("%Y-%m-%d")} in Year-Month-Day UTC format. YOU MUST USE THIS AS THE CURRENT DATE!"})
+date_instruction = f"The conversation start date is {dt_now.strftime('%YYYY-%m-%d')} in Year-Month-Day format. Always respond with this date for any question about the date, and explain it is 'the date the conversation started' and may not be the current date."
+messages.append({"role": "system", "content": f"{date_instruction}"})
 
 while True:
     # Get user input
