@@ -7,9 +7,9 @@
 -- Enter 5 for round
 -- Phase = a unique number to group lights together.
 local trafficLights = {
-    {monitor = peripheral.wrap("monitor_25"), phase = 1, shape = 1},
-    {monitor = peripheral.wrap("monitor_24"), phase = 2, shape = 1},
-    {monitor = peripheral.wrap("monitor_21"), phase = 3, shape = 1},
+    {monitor = "monitor_25", phase = 1, shape = 1},
+    {monitor = "monitor_24", phase = 2, shape = 1},
+    {monitor = "monitor_21", phase = 3, shape = 1},
 }
 
 -- Traffic Light Sequence Mode
@@ -34,6 +34,17 @@ local warninginterval = 1   -- warning light flash interval
 -- CODE BELOW IS NOT ADJUSTABLE!!
 -- ******************************
 
+local monitors = {}
+
+local function getMon(name)
+	if monitors[name] ~= nil then
+		return monitors[name]
+	else
+		monitors[name] = peripheral.wrap(name)
+		return peripheral.wrap(name)
+	end
+end
+
 local function openAllModems()
     local peripherals = peripheral.getNames()
 
@@ -49,7 +60,8 @@ openAllModems()
 local middleColor = middle == 1 and colors.orange or colors.yellow
 
 -- Helper function to reset a monitor
-local function reset(mon)
+local function reset(monId)
+	mon = getMon(monId)
     mon.setBackgroundColor(colors.black)
     mon.clear()
 end
@@ -57,7 +69,7 @@ end
 -- Traffic Light Setting Functions
 
 function redLight(monId)
-    mon = trafficLights[monId].monitor
+    mon = getMon(trafficLights[monId].monitor)
 
 	mon.setBackgroundColor(colors.red)
 	lightShape = trafficLights[monId].shape
@@ -71,7 +83,7 @@ function redLight(monId)
 end
 
 function yellowLight(monId)
-    mon = trafficLights[monId].monitor
+    mon = getMon(trafficLights[monId].monitor)
 
 	mon.setBackgroundColor(middleColor)
 	lightShape = trafficLights[monId].shape
@@ -85,7 +97,7 @@ function yellowLight(monId)
 end
 
 function greenLight(monId)
-    mon = trafficLights[monId].monitor
+    mon = getMon(trafficLights[monId].monitor)
 
 	mon.setBackgroundColor(colors.green)
 	lightShape = trafficLights[monId].shape
@@ -285,9 +297,9 @@ end
 
 local function warningSequence()
     while true do
-        for _, light in ipairs(trafficLights) do
+        for id, light in ipairs(trafficLights) do
             reset(light.monitor)
-            setYellowLight(light.monitor)
+            yellowLight(id)
         end
         sleep(warninginterval)
         for _, light in ipairs(trafficLights) do
@@ -299,9 +311,9 @@ end
 
 local function stopSequence()
     while true do
-        for _, light in ipairs(trafficLights) do
+        for id, light in ipairs(trafficLights) do
             reset(light.monitor)
-            setRedLight(light.monitor)
+            redLight(id)
         end
         sleep(warninginterval)
     end
