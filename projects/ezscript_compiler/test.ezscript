@@ -1,0 +1,6 @@
+import "console"
+
+function main(): int do
+    print(120.23232);
+    return 0;
+end
