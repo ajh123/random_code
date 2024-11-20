@@ -1,6 +1,10 @@
-import "console"
+import "console";
+
+function add(int a, int b) do
+    return a;
+end
 
 function main(): int do
-    print(120.23232);
+    console.write(add(1, 2.66));
     return 0;
 end
