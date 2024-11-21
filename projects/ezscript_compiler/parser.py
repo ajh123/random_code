@@ -34,7 +34,7 @@ class Parser:
                 else:
                     raise_parser_error(f"Unhandled keyword: {token.token.value}", token, self.source)
             else:
-                raise_parser_error(f"Unexpected token: {token}", token, self.source)
+                raise_parser_error(f"Unexpected token: {token.token.token_type.lower()} token: `{token.token.value}`.", token, self.source)
         return self.ast
 
     def parse_import(self) -> Dict[str, str]:

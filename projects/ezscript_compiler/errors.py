@@ -7,6 +7,7 @@ class LexerError(Exception):
         self.col = col
         self.source = source
         self.length = length
+        self.file = "<stdin>"
         super().__init__(message)
 
     def __str__(self):
@@ -14,7 +15,7 @@ class LexerError(Exception):
         error_line = lines[self.line - 1] if self.line - 1 < len(lines) else ""
         pointer = " " * (self.col - 1) + "^" * self.length
         return (
-            f"  File \"<stdin>\", line {self.line}\n"
+            f"  File \"{self.file}\", line {self.line}\n"
             f"    {error_line}\n"
             f"    {pointer}\n"
             f"LexerError: {self.message}"
@@ -33,6 +34,7 @@ class ParserError(Exception):
         self.message = message
         self.token = token
         self.source = source
+        self.file = "<stdin>"
         super().__init__(message)
 
     def __str__(self):
@@ -60,7 +62,7 @@ class ParserError(Exception):
         pointer = " " * (token_col - 1) + "^" * len(self.token.token.value)  # Pointer for the token position
 
         return (
-            f"  File \"<stdin>\", line {token_line}\n"
+            f"  File \"{self.file}\", line {token_line}\n"
             f"    {error_line}\n"
             f"    {pointer}\n"
             f"ParseError: {self.message}"

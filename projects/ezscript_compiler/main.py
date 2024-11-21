@@ -3,7 +3,9 @@ from parser import Parser
 from errors import LexerError, ParserError
 import sys
 
-with open("test.ezscript") as f:
+file = sys.argv[1]
+
+with open(file) as f:
     source = f.read()
     try:
         # First, use the lexer to tokenize the source code
@@ -22,9 +24,11 @@ with open("test.ezscript") as f:
         print(ast)
 
     except LexerError as e:
+        e.file = file
         print(e)
         sys.exit(-1)
 
     except ParserError as e:
+        e.file = file
         print(e)
         sys.exit(-1)
