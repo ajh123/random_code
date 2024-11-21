@@ -30,6 +30,15 @@ class Literal(Token):
     def __str__(self) -> str:
         return f"Token({self.token_type}:{self.type.value}) = {self.value}"
 
+class TokenWithPos:
+    def __init__(self, token: Token, start_pos: int, end_pos: int):
+        self.token = token
+        self.start_pos = start_pos
+        self.end_pos = end_pos
+    
+    def __str__(self):
+        return f"{self.token} @ {self.start_pos} > {self.end_pos}"
+
 primitives = {
     "int" : PrimitiveType("int"),
     "void" : PrimitiveType("void"),

@@ -2,10 +2,10 @@ from typing import List
 from errors import *
 from tokens import *
 
-def lexer(data: str) -> List[Token]:
+def lexer(data: str) -> List[TokenWithPos]:
     pos = 0
     char = data[pos]
-    tokens: List[Token] = []
+    tokens: List[TokenWithPos] = []
 
     while pos < len(data):
         while char in ["\t", "\n", " "]:
@@ -15,6 +15,7 @@ def lexer(data: str) -> List[Token]:
 
         if (char.isalnum() or char == ".") and not char.isdigit():
             id_str = ""
+            start_pos = pos
             while char.isalnum() or char == ".":
                 id_str += char
                 pos += 1
@@ -22,17 +23,17 @@ def lexer(data: str) -> List[Token]:
                 except: char = ""
             
             if id_str in keywords.keys():
-                tokens.append(keywords[id_str])
+                tokens.append(TokenWithPos(keywords[id_str], start_pos, pos))
             elif id_str in primitives.keys():
-                tokens.append(primitives[id_str])
+                tokens.append(TokenWithPos(primitives[id_str], start_pos, pos))
             else:
-                tokens.append(Identifier(id_str))
+                tokens.append(TokenWithPos(Identifier(id_str), start_pos, pos))
 
         elif char.isdigit() or (char == "." and pos + 1 < len(data) and data[pos + 1].isdigit()):
             num_str = ""
             dot_count = 0
             start_pos = pos
-            if isinstance(tokens[len(tokens) - 1], Operator) and tokens[len(tokens) - 1].value == "-":
+            if isinstance(tokens[len(tokens) - 1].token, Operator) and tokens[len(tokens) - 1].token.value == "-":
                 if data[pos - 1] == "-":
                     num_str = "-" + num_str
                     del tokens[len(tokens) - 1]
@@ -47,9 +48,9 @@ def lexer(data: str) -> List[Token]:
             if dot_count > 1:
                 raise_lexer_error(f"The number `{num_str}` contains multiple dots!", data, start_pos, pos - start_pos)
             elif dot_count == 1:
-                tokens.append(Literal(num_str, primitives["float"]))
+                tokens.append(TokenWithPos(Literal(num_str, primitives["float"]), start_pos, pos))
             else:
-                tokens.append(Literal(num_str, primitives["int"]))
+                tokens.append(TokenWithPos(Literal(num_str, primitives["int"]), start_pos, pos))
 
         elif char in ["\"", "'"]:
             op = char
@@ -70,14 +71,14 @@ def lexer(data: str) -> List[Token]:
             pos += 1
             char = data[pos] if pos < len(data) else ""
 
-            tokens.append(Literal(value_str, primitives["string"]))
+            tokens.append(TokenWithPos(Literal(value_str, primitives["string"]), start_pos, pos))
         elif char in operators:
             pos += 1
             op_str = char
             try: char = data[pos]
             except: char = ""
 
-            tokens.append(operators[op_str])
+            tokens.append(TokenWithPos(operators[op_str], pos, pos))
         else:
             raise_lexer_error(f"Unknown character `{char}`.", data, pos)
 
