@@ -65,5 +65,6 @@ operators = {
     "(": Operator("("),
     ")": Operator(")"),
     ";": Operator(";"),
-    ",": Operator(",")
+    ",": Operator(","),
+    "=": Operator("=")
 }

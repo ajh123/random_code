@@ -12,6 +12,8 @@ with open("test.ezscript") as f:
         for token in tokens:
             print(token)
         
+        print("=====")
+        
         # Then, pass the tokens to the parser
         parser = Parser(tokens, source)  # Instantiate the Parser with the tokens
         ast = parser.parse()  # Parse the tokens and generate the AST

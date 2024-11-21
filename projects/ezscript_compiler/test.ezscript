@@ -5,6 +5,7 @@ function add(int a, int b) do
 end
 
 function main(): int do
-    console.write(add(1, 2.66));
+    int x = add(1, 2.66);
+    console.write(x);
     return 0;
 end

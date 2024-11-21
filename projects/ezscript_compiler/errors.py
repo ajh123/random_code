@@ -52,6 +52,9 @@ class ParserError(Exception):
         token_line_start = sum(len(line) + 1 for line in lines[:token_line - 1])  # Sum up the length of lines before this one
         token_col = self.token.start_pos - token_line_start
 
+        if len(self.token.token.value) > 1:
+            token_col += 1
+
         # Get the error line and pointer
         error_line = lines[token_line - 1] if token_line - 1 < len(lines) else ""
         pointer = " " * (token_col - 1) + "^" * len(self.token.token.value)  # Pointer for the token position
