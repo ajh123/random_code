@@ -1,0 +1,69 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "EZ Script",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#primitive_types"
+		},
+		{
+			"include": "#double_strings"
+		},
+		{
+			"include": "#single_strings"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#identifiers"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.ezscript",
+				"match": "\\b(function|do|end|return|import)\\b"
+			}]
+		},
+		"primitive_types": {
+			"patterns": [{
+				"name": "storage.type.primitive.ezscript",
+				"match": "\\b(int|void|float|string)\\b"
+			}]
+		},
+		"double_strings": {
+			"name": "string.quoted.double.ezscript",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ezscript",
+					"match": "\\\\."
+				}
+			]
+		},
+		"single_strings": {
+			"name": "string.quoted.single.ezscript",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ezscript",
+					"match": "\\\\."
+				}
+			]
+		},
+		"numbers": {
+			"name": "constant.numeric.ezscript",
+			"match": "-?\\b\\d+(\\.\\d+)?\\b"
+		},
+		"identifiers": {
+			"name": "variable.other.ezscript",
+			"match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+		}
+	},
+	"scopeName": "source.ezscript"
+}

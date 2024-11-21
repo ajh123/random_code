@@ -1,0 +1,25 @@
+{
+  "name": "ezscript-lang",
+  "displayName": "ezscript_lang",
+  "description": "A language server for ezscript",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "ezscript",
+      "aliases": ["EZ Script", "ezscript"],
+      "extensions": [".ezscript .ezs"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "ezscript",
+      "scopeName": "source.ezscript",
+      "path": "./syntaxes/ezscript.tmLanguage.json"
+    }]
+  }
+}
