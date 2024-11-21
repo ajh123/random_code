@@ -1,11 +1,14 @@
 import "console";
 
-function add(int a, int b) do
+function add(int a, int b): int do
     return a;
 end
 
 function main(): int do
+    int c;
     int x = add(1, 2.66);
-    console.write(x);
-    return 0;
+    c = x;
+    console.write(c);
+    int status = 0;
+    return status;
 end

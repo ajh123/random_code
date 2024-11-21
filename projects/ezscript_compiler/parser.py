@@ -49,7 +49,7 @@ class Parser:
         self.match("OPERATOR", "(")
         args = self.parse_arguments()
         self.match("OPERATOR", ")")
-        return_type: Optional[str] = None
+        return_type: Optional[str] = "void"
         if self.current_token() and self.current_token().token.value == ":":
             self.match("OPERATOR", ":")
             return_type = self.match("PRIMITIVE").token.value
@@ -87,30 +87,45 @@ class Parser:
         name = self.match("IDENTIFIER").token.value
         # Check if we are assigning.
         if isinstance(self.current_token().token, Operator) and self.current_token().token.value == "=":
+            # self.pos -= 1
             self.match("OPERATOR", "=")
-            # Check if we are assinging an variable or function call result.
-            if isinstance(self.peek_token().token, Identifier):
+            # Check if we are assigning an variable or function call result.
+            if isinstance(self.current_token().token, Identifier):
                 value = None
                 # Check for a function call result
                 if isinstance(self.peek_token(1).token, Operator) and self.peek_token(1).token.value == "(":
                     value = self.parse_function_call()
+                    return {"type": "variable_define", "name": name, "data_type": type, "value": value}
                 # Otherwise we are assigning a variable to another one.
                 else:
                     identifier = self.match("IDENTIFIER").token.value
-                    value = {"type": "variable", "name": identifier}
+                    value = identifier
                     self.match("OPERATOR", ";")
-                return {"type": "variable_assign", "name": name, "type": type, "value": value}
-            # Check if we are assiging a literal value, like an int or string.
-            elif isinstance(self.peek_token().token, Literal):
-                pass
+                return {"type": "variable_define", "name": name, "data_type": type, "value": value}
+            # Check if we are assigning a literal value, like an int or string.
+            elif isinstance(self.current_token().token, Literal):
+                identifier = self.match("LITERAL").token.value
+                value = identifier
+                self.match("OPERATOR", ";")
+                return {"type": "variable_define", "name": name, "data_type": type, "value": value}
+        elif isinstance(self.current_token().token, Operator) and self.current_token().token.value == ";":
+            self.match("OPERATOR", ";")
+            return {"type": "variable_define", "name": name, "data_type": type}
 
-        return {"type": "variable_define", "name": name, "type": type}
+    def parse_variable_assignment(self) -> Dict[str, Any]:
+        dest = self.match("IDENTIFIER").token.value
+        self.match("OPERATOR", "=")
+        source = self.match("IDENTIFIER").token.value
+        self.match("OPERATOR", ";")
+        return {"type": "variable_assign", "dest": dest, "source": source}
 
     def parse_statement(self) -> Dict[str, Any]:
         token = self.current_token()
         if isinstance(token.token, Identifier):
             if isinstance(self.peek_token().token, Operator) and self.peek_token().token.value == "(":
                 return self.parse_function_call()
+            elif isinstance(self.peek_token().token, Operator) and self.peek_token().token.value == "=":
+                return self.parse_variable_assignment()
             else:
                 raise_parser_error(f"Unexpected identifier: `{token.token.value}`", token, self.source)
         else:
