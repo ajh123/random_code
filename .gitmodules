@@ -1,3 +1,4 @@
 [submodule "packages/sam_utils"]
 	path = packages/sam_utilities
 	url = https://github.com/ajh123/sam_utils
+	branch = main
