@@ -479,6 +479,9 @@
       <a name="fanout" val="3"/>
       <a name="incoming" val="3"/>
     </comp>
+    <comp lib="4" loc="(330,570)" name="ROM">
+      <a name="appearance" val="logisim_evolution"/>
+    </comp>
     <comp lib="5" loc="(350,430)" name="DipSwitch">
       <a name="number" val="9"/>
     </comp>
