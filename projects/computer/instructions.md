@@ -15,8 +15,8 @@ Opcode        Operands
 | ------ | -------------------- | ------ | ----------------------------------------------- | --------------------------- |
 | `0000` | No Operation         | `NOP`  | Not applicable                                  |                             |
 | `0001` | Jump                 | `JMP`  | Bits 0 - 3 = condition                          |                             |
-| `0010` | Read from port       | `INP`  | Bits 0 - 2 = destination reg, bits 3 - 6 = port |                             |
-| `0011` | Write to port        | `OUTP` | Bits 0 - 2 = source reg, bits 3 - 6 = port      |                             |
+| `0010` | Read from port?      | `INP`  | Bits 0 - 2 = destination reg, bits 3 - 6 = port |                             |
+| `0011` | Write to port?       | `OUTP` | Bits 0 - 2 = source reg, bits 3 - 6 = port      |                             |
 | `0100` | Load immediate       | `LDI`  | Bits 0 - 2 = first reg, bits 3 - 10 = data      | First reg updates to data   |
 | `0101` | Add                  | `ADD`  | Bits 0 - 2 = first reg, bits 3 - 5 = second reg | First reg updates to result |
 | `0110` | Subtract             | `SUB`  | Bits 0 - 2 = first reg, bits 3 - 5 = second reg | First reg updates to result |
