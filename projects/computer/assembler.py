@@ -1,5 +1,27 @@
 import argparse
 
+def binary_to_hex(binary_str):
+    # Convert binary string to integer
+    decimal_value = int(binary_str, 2)
+    # Convert integer to hexadecimal string
+    hex_value = hex(decimal_value)
+    # Remove the '0x' prefix
+    return hex_value[2:]
+
+
+def binary_to_hex_list(binary_list):
+    hex_list = [format(int(b, 2), '04x') for b in binary_list]
+    return hex_list
+
+
+def format_hex_list(hex_list):
+    formatted_lines = ["v3.0 hex words addressed"]
+    for i in range(0, len(hex_list), 8):
+        address = format(i // 8 * 16, '02x')
+        line = f"{address}: " + " ".join(hex_list[i:i+8])
+        formatted_lines.append(line)
+    return "\n".join(formatted_lines)
+
 
 class OperandType:
     """
@@ -85,7 +107,7 @@ class Assembler:
             raise ValueError("Operand format and operand types must have the same length.")
         self.instructions[name.upper()] = (Instruction(name, opcode, operand_format), operand_types)
 
-    def assemble(self, input_file, output_file):
+    def assemble(self, input_file, output_file, otput_format):
         """
         Assembles a program from an input file and writes the binary code to an output file.
 
@@ -125,8 +147,17 @@ class Assembler:
                 machine_code.append(binary_code)
 
         with open(output_file, 'w') as outfile:
-            for binary_line in machine_code:
-                outfile.write(binary_line + "\n")
+            if otput_format == "raw":
+                for i in range(0, len(machine_code)):
+                    binary_line = machine_code[i]
+                    if i < len(machine_code) - 1:
+                        outfile.write(binary_line + "\n")
+                    else:
+                        outfile.write(binary_line)
+            elif otput_format == "logisim_v3_hex":
+                hex_list = binary_to_hex_list(machine_code)
+                formatted_string = format_hex_list(hex_list)
+                outfile.write(formatted_string)
 
 
 def main():
@@ -134,20 +165,22 @@ def main():
     parser = argparse.ArgumentParser(description="My assembler.")
     parser.add_argument("input_file", help="Path to the input assembly file.")
     parser.add_argument("output_file", help="Path to the output binary file.")
+    parser.add_argument("-f", "--format", choices=["logisim_v3_hex", "raw"], default="raw")
     args = parser.parse_args()
 
     # Create the assembler and define the instruction set
     assembler = Assembler()
-    assembler.add_instruction("NOP", 0b0000)  # No operation
-    assembler.add_instruction("ADD", 0b0101, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])  # Add
-    assembler.add_instruction("SUB", 0b0110, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])  # Subtract
-    assembler.add_instruction("AND", 0b0111, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])  # AND
-    assembler.add_instruction("NAND", 0b1000, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])  # NAND
-    assembler.add_instruction("XOR", 0b1001, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])  # XOR
+    assembler.add_instruction("NOP", 0b0000)
+    assembler.add_instruction("ADD", 0b0101, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
+    assembler.add_instruction("SUB", 0b0110, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
+    assembler.add_instruction("AND", 0b0111, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
+    assembler.add_instruction("OR", 0b1000, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
+    assembler.add_instruction("XOR", 0b1001, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
+    assembler.add_instruction("NOT", 0b1010, [(0, 2)], [RegisterOperand])
     assembler.add_instruction("HLT", 0b1111)  # Halt
 
     # Assemble the program
-    assembler.assemble(args.input_file, args.output_file)
+    assembler.assemble(args.input_file, args.output_file, args.format)
     print(f"Assembly complete. Machine code saved to {args.output_file}.")
 
 
