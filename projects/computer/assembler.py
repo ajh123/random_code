@@ -1,26 +1,56 @@
 import argparse
 
-def binary_to_hex(binary_str):
-    # Convert binary string to integer
-    decimal_value = int(binary_str, 2)
-    # Convert integer to hexadecimal string
-    hex_value = hex(decimal_value)
-    # Remove the '0x' prefix
-    return hex_value[2:]
+
+class OutputFormat:
+    """
+    Base class for output formatting.
+    Subclasses must implement the `format` method.
+    """
+    def format(self, machine_code):
+        raise NotImplementedError("Subclasses must implement the format method.")
 
 
-def binary_to_hex_list(binary_list):
-    hex_list = [format(int(b, 2), '04x') for b in binary_list]
-    return hex_list
+class RawOutputFormat(OutputFormat):
+    """
+    Raw output format, where binary instructions are written line by line.
+    """
+    def format(self, machine_code):
+        return "\n".join(machine_code)
 
 
-def format_hex_list(hex_list):
-    formatted_lines = ["v3.0 hex words addressed"]
-    for i in range(0, len(hex_list), 8):
-        address = format(i // 8 * 16, '02x')
-        line = f"{address}: " + " ".join(hex_list[i:i+8])
-        formatted_lines.append(line)
-    return "\n".join(formatted_lines)
+class LogisimV3HexOutputFormat(OutputFormat):
+    """
+    Logisim v3.0 hexadecimal output format.
+    Pads output to 256 words (16-bit each) and ensures 16 columns per row.
+    """
+    @staticmethod
+    def binary_to_hex_list(binary_list):
+        return [format(int(b, 2), '04x') for b in binary_list]
+
+    @staticmethod
+    def format_hex_list(hex_list):
+        # Add padding to reach 256 words
+        total_words = 256
+        while len(hex_list) < total_words:
+            hex_list.append("0000")
+
+        formatted_lines = ["v3.0 hex words addressed"]
+        for i in range(0, len(hex_list), 16):  # 16 words per row
+            address = format(i, '02x')
+            line = f"{address}: " + " ".join(hex_list[i:i+16])
+            formatted_lines.append(line)
+        return "\n".join(formatted_lines)
+
+    def format(self, machine_code):
+        hex_list = self.binary_to_hex_list(machine_code)
+        return self.format_hex_list(hex_list)
+
+
+# Global dictionary of output formats
+output_formats = {
+    "raw": RawOutputFormat(),
+    "logisim_v3_hex": LogisimV3HexOutputFormat()
+}
 
 
 class OperandType:
@@ -29,7 +59,7 @@ class OperandType:
     Subclasses must implement the `parse` method to define custom parsing and validation logic.
     """
     @staticmethod
-    def parse(value):
+    def parse(value: str):
         """
         Parses and validates the operand.
 
@@ -40,17 +70,32 @@ class OperandType:
 
 
 class RegisterOperand(OperandType):
+    max_registers = 8
     """
     Operand type for register identifiers (e.g., R0, R1, R2).
     """
     @staticmethod
-    def parse(value):
+    def parse(value: str):
         if not value.upper().startswith("R") or not value[1:].isdigit():
             raise ValueError(f"Invalid register identifier: {value}")
         register_number = int(value[1:])
-        if register_number < 0 or register_number > 7:
+        if register_number < 0 or register_number > RegisterOperand.max_registers:
             raise ValueError(f"Register out of range: {value}")
         return register_number
+
+
+class LiteralInteger(OperandType):
+    max_registers = 8
+    """
+    Operand type for integers.
+    """
+    @staticmethod
+    def parse(value: str):
+        if not value.isnumeric():
+            raise ValueError(f"Invalid number literal: {value}")
+        if int(value) > 255:
+            raise ValueError(f"Integer too big, must be greater then 255: {value}")
+        return int(value)
 
 
 class Instruction:
@@ -107,18 +152,22 @@ class Assembler:
             raise ValueError("Operand format and operand types must have the same length.")
         self.instructions[name.upper()] = (Instruction(name, opcode, operand_format), operand_types)
 
-    def assemble(self, input_file, output_file, otput_format):
+    def assemble(self, input_file, output_file, output_format):
         """
         Assembles a program from an input file and writes the binary code to an output file.
 
         :param input_file: Path to the file containing assembly instructions.
         :param output_file: Path to the file to save machine code.
+        :param output_format: The format to use to write the machine code to file.
         """
+        if output_format not in output_formats:
+            raise ValueError(f"Unsupported output format: {output_format}")
+
         machine_code = []
         with open(input_file, 'r') as infile:
             for line in infile:
                 line = line.strip()
-                if not line or line.startswith("#"):  # Skip empty lines and comments
+                if not line or line.startswith("#"):
                     continue
 
                 parts = line.split()
@@ -146,18 +195,13 @@ class Assembler:
                 binary_code = instruction.encode(operands)
                 machine_code.append(binary_code)
 
+        # Use the appropriate output formatter
+        formatter = output_formats[output_format]
+        formatted_code = formatter.format(machine_code)
+
+        # Write to output file
         with open(output_file, 'w') as outfile:
-            if otput_format == "raw":
-                for i in range(0, len(machine_code)):
-                    binary_line = machine_code[i]
-                    if i < len(machine_code) - 1:
-                        outfile.write(binary_line + "\n")
-                    else:
-                        outfile.write(binary_line)
-            elif otput_format == "logisim_v3_hex":
-                hex_list = binary_to_hex_list(machine_code)
-                formatted_string = format_hex_list(hex_list)
-                outfile.write(formatted_string)
+            outfile.write(formatted_code)
 
 
 def main():
@@ -165,12 +209,13 @@ def main():
     parser = argparse.ArgumentParser(description="My assembler.")
     parser.add_argument("input_file", help="Path to the input assembly file.")
     parser.add_argument("output_file", help="Path to the output binary file.")
-    parser.add_argument("-f", "--format", choices=["logisim_v3_hex", "raw"], default="raw")
+    parser.add_argument("-f", "--format", choices=output_formats.keys(), default="raw")
     args = parser.parse_args()
 
     # Create the assembler and define the instruction set
     assembler = Assembler()
     assembler.add_instruction("NOP", 0b0000)
+    assembler.add_instruction("LDI", 0b0100, [(0, 2), (3, 10)], [RegisterOperand, LiteralInteger])
     assembler.add_instruction("ADD", 0b0101, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
     assembler.add_instruction("SUB", 0b0110, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])
     assembler.add_instruction("AND", 0b0111, [(0, 2), (3, 5)], [RegisterOperand, RegisterOperand])

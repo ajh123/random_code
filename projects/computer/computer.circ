@@ -8,6 +8,7 @@
     </tool>
     <tool name="Pin">
       <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
     </tool>
     <tool name="Probe">
       <a name="appearance" val="classic"/>
@@ -18,9 +19,6 @@
     </tool>
   </lib>
   <lib desc="#Gates" name="1">
-    <tool name="NOT Gate">
-      <a name="facing" val="north"/>
-    </tool>
     <tool name="OR Gate">
       <a name="facing" val="north"/>
     </tool>
@@ -519,7 +517,8 @@
     <comp lib="4" loc="(100,810)" name="ROM">
       <a name="appearance" val="logisim_evolution"/>
       <a name="contents">addr/data: 8 16
-0 5280 60c0 7440 86c0 9200 f000
+0 42c8 4414 4650 5280 62c0 7440 86c0
+9240 f000
 </a>
       <a name="dataWidth" val="16"/>
     </comp>
@@ -659,6 +658,9 @@
       <a name="label" val="Data_In"/>
       <a name="width" val="8"/>
     </comp>
+    <comp lib="0" loc="(380,330)" name="Constant">
+      <a name="value" val="0x0"/>
+    </comp>
     <comp lib="0" loc="(790,310)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
@@ -673,6 +675,7 @@
       <a name="output" val="true"/>
       <a name="width" val="8"/>
     </comp>
+    <comp lib="1" loc="(210,120)" name="NOT Gate"/>
     <comp lib="1" loc="(500,1080)" name="Controlled Buffer">
       <a name="control" val="left"/>
       <a name="width" val="8"/>
@@ -773,12 +776,13 @@
     <comp lib="4" loc="(390,940)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
     </comp>
-    <wire from="(170,120)" to="(230,120)"/>
+    <wire from="(170,120)" to="(180,120)"/>
     <wire from="(170,150)" to="(240,150)"/>
     <wire from="(170,190)" to="(390,190)"/>
     <wire from="(170,220)" to="(660,220)"/>
     <wire from="(170,250)" to="(290,250)"/>
     <wire from="(170,310)" to="(250,310)"/>
+    <wire from="(210,120)" to="(230,120)"/>
     <wire from="(230,1010)" to="(230,1120)"/>
     <wire from="(230,1010)" to="(390,1010)"/>
     <wire from="(230,1120)" to="(390,1120)"/>
@@ -838,6 +842,7 @@
     <wire from="(350,990)" to="(390,990)"/>
     <wire from="(360,1100)" to="(390,1100)"/>
     <wire from="(360,270)" to="(360,1100)"/>
+    <wire from="(380,330)" to="(390,330)"/>
     <wire from="(390,190)" to="(390,250)"/>
     <wire from="(390,250)" to="(570,250)"/>
     <wire from="(420,1030)" to="(420,1040)"/>
